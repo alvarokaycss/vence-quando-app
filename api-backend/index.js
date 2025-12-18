@@ -53,6 +53,25 @@ app.get("/test-db", async (req, res) => {
     }
 })
 
+// ROTA DE LOGIN
+app.post("/login", async (req, res) => {
+    const { email, password } = req.body;
+
+    if (!email || !password) return res.status(400).json({ error: "Dados incompletos!" })
+
+    try {
+        const query = `SELECT id, name, email FROM ${SCHEMA}.users WHERE email = $1 AND password = $2`;
+        const result = await pool.query(query, [email, password]);
+
+        if (result.rows.length === 0) return res.status(401).json({ error: "Credenciais Inválidas!" })
+
+        res.status(200).json({ message: "Login Realizado!", user: result.rows[0] });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Erro interno do servidor." })
+    }
+});
+
 app.listen(port, () => {
     console.log(`Servidor rodando em http://localhost:${port}`);
 })
