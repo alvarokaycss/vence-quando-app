@@ -1,0 +1,23 @@
+# Lixo do Sistema Operacional 
+.DS_Store
+Thumbs.db
+
+# Backend (Node)
+api-backend/node_modules/
+api-backend/.env
+api-backend/npm-debug.log
+
+# Android (Pasta app-mobile)
+# Ignorar cache do Gradle e IDE
+app-mobile/.gradle/
+app-mobile/.idea/
+
+# Ignorar pastas de build (binários gerados)
+app-mobile/build/
+app-mobile/app/build/
+
+# Ignorar configurações locais
+app-mobile/local.properties
+
+# Outros arquivos temporários
+*.iml
