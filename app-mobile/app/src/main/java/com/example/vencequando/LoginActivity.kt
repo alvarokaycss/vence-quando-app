@@ -45,7 +45,10 @@ class LoginActivity: AppCompatActivity() {
                     if (response.isSuccessful) {
                         val loginResponse = response.body()
                         Toast.makeText(applicationContext, "Sucesso: ${loginResponse?.message}", Toast.LENGTH_SHORT).show()
-                        // AQUI IRÁ MUDAR A TELA PARA A HOME
+
+                        val intent = android.content.Intent(this@LoginActivity, MainActivity::class.java)
+                        startActivity(intent)
+                        finish()
                     } else {
                         Toast.makeText(applicationContext, "Falha no Login (Senha Incorreta)", Toast.LENGTH_SHORT).show()
                     }
