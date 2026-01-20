@@ -72,6 +72,52 @@ app.post("/login", async (req, res) => {
     }
 });
 
+// ROTA DE PRODUTOS
+app.get("/products", async (req, res) => {
+    try {
+        const query = `
+        SELECT id, name, category, expiration_date FROM ${SCHEMA}.products
+        ORDER BY expiration_date ASC
+        `;
+
+        const result = await pool.query(query);
+
+        const productsWithStatus = result.rows.map(product => {
+            const hoje = new Date();
+
+            hoje.setHours(0, 0, 0, 0);
+            const dataVencimento = new Date(product.expiration_date);
+            dataVencimento.setHours(0, 0, 0, 0);
+
+            // Calcula a diferença em millisegundos e converte pra dias
+            const diffTime = dataVencimento - hoje;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            let status = "OK";
+            if (diffDays <= 0) status = "VENCIDO";
+            if (diffDays <= 3) status = "URGENTE";
+            if (diffDays <= 7) status = "ATENCAO";
+            
+            const dataFormatada = dataVencimento.toLocaleDateString("pt-BR");
+
+            return {
+                id: product.id,
+                name: product.name,
+                category: product.category,
+                expiration_date: dataFormatada,
+                status: status,
+                daysRemaining: diffDays
+            };
+        });
+        
+        res.status(200).json({products: productsWithStatus});
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Erro ao buscar produtos." })
+    }
+})
+
 app.listen(port, () => {
     console.log(`Servidor rodando em http://localhost:${port}`);
 })
