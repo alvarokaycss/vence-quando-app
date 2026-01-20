@@ -1,20 +1,66 @@
 package com.example.vencequando
 
+import android.content.Intent
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var rvProducts: RecyclerView
+    private lateinit var fabAdd: FloatingActionButton
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_main)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+
+        rvProducts = findViewById(R.id.rvProducts)
+        fabAdd = findViewById(R.id.fabAdd)
+
+        rvProducts.layoutManager = LinearLayoutManager(this)
+
+        fabAdd.setOnClickListener {
+            Toast.makeText(this, "Adicionar novo produto", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        carregarProdutosDoServidor()
+    }
+
+    private fun carregarProdutosDoServidor() {
+        val retrofit = Retrofit.Builder()
+            .baseUrl("http://10.0.2.2:3000")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        val service = retrofit.create(ApiService::class.java)
+
+        service.getProducts().enqueue(object : Callback<ProductsResponse> {
+            override fun onResponse(call: Call<ProductsResponse>, response: Response<ProductsResponse>) {
+                if (response.isSuccessful) {
+                    val listaReal = response.body()?.products
+
+                    if (listaReal != null) {
+                        rvProducts.adapter = ProductAdapter(listaReal)
+                    }
+                } else {
+                    Toast.makeText(applicationContext, "Erro ao carregar lista", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<ProductsResponse>, t: Throwable) {
+                Toast.makeText(applicationContext, "Sem conexão com servidor", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 }

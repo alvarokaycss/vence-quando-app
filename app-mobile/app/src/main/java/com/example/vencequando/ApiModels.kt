@@ -15,3 +15,7 @@ data class UserData(
     val name: String,
     val email: String
 )
+
+data class ProductsResponse(
+    val products: List<Product>
+)
