@@ -72,7 +72,7 @@ app.post("/login", async (req, res) => {
     }
 });
 
-// ROTA DE PRODUTOS
+// ROTA DE PRODUTOS (CRUD)
 app.get("/products", async (req, res) => {
     try {
         const query = `
@@ -117,6 +117,75 @@ app.get("/products", async (req, res) => {
         res.status(500).json({ error: "Erro ao buscar produtos." })
     }
 })
+
+app.post("/products", async (req, res) => {
+    try {
+        const { name, category, expiration_date, user_id } = req.body;
+
+        if (!name || !category || !expiration_date || !user_id) {
+            return res.status(400).json({ error: "Dados incompletos!" });
+        }
+        // Front end envia data no formato dd/mm/yyyy (lembrar de converter)
+        const query = `
+        INSERT INTO ${SCHEMA}.products (name, category, expiration_date, user_id)
+        VALUES ($1, $2, $3, $4)
+        RETURNING *
+        `;
+
+        const result = await pool.query(query, [name, category, expiration_date, user_id]);
+
+        res.status(201).json({ message: "Produto criado com sucesso!", product: result.rows[0] });  
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Erro ao criar produto." })
+    }
+})
+
+app.put("/products/:id", async (req, res) => {
+    try {
+        const id = req.params.id;
+        const { name, category, expirationDate } = req.body;
+
+        const query = `
+            UPDATE ${SCHEMA}.products 
+            SET name = $1, category = $2, expiration_date = $3
+            WHERE id = $4
+            RETURNING *
+        `;
+
+        const values = [name, category, expirationDate, id];
+        const result = await pool.query(query, values);
+
+        if (result.rowCount === 0) {
+            return res.status(404).json({ error: "Produto não encontrado" });
+        }
+
+        res.status(200).json(result.rows[0]);
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Erro ao atualizar produto" });
+    }
+});
+
+app.delete("/products/:id", async (req, res) => {
+    try {
+        const id = req.params.id;
+
+        const query = `DELETE FROM ${SCHEMA}.products WHERE id = $1 RETURNING id`;
+        const result = await pool.query(query, [id]);
+
+        if (result.rowCount === 0) {
+            return res.status(404).json({ error: "Produto não encontrado" });
+        }
+
+        res.status(200).json({ message: "Produto deletado com sucesso" });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Erro ao deletar produto" });
+    }
+});
 
 app.listen(port, () => {
     console.log(`Servidor rodando em http://localhost:${port}`);
