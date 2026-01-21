@@ -2,6 +2,7 @@ package com.example.vencequando
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,12 +24,20 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         rvProducts = findViewById(R.id.rvProducts)
-        fabAdd = findViewById(R.id.fabAdd)
+        fabAdd = findViewById(R.id.fabAdd)                  // Botão de Adicionar
+        val btnExit = findViewById<ImageView>(R.id.btnExit) // Botão de Signout
 
         rvProducts.layoutManager = LinearLayoutManager(this)
 
         fabAdd.setOnClickListener {
             Toast.makeText(this, "Adicionar novo produto", Toast.LENGTH_SHORT).show()
+        }
+
+        btnExit.setOnClickListener {
+            val intent = Intent(this, LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            finish()
         }
     }
 
