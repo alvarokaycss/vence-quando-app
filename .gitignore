@@ -21,3 +21,6 @@ app-mobile/local.properties
 
 # Outros arquivos temporários
 *.iml
+
+# Arquivos de desenvolvimento
+.kotlin
