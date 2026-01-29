@@ -30,7 +30,8 @@ class MainActivity : AppCompatActivity() {
         rvProducts.layoutManager = LinearLayoutManager(this)
 
         fabAdd.setOnClickListener {
-            Toast.makeText(this, "Adicionar novo produto", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, AddProductActivity::class.java)
+            startActivity(intent)
         }
 
         btnExit.setOnClickListener {

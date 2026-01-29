@@ -19,3 +19,27 @@ data class UserData(
 data class ProductsResponse(
     val products: List<Product>
 )
+
+data class AddProductRequest(
+    val name: String,
+    val category: String?,
+    val expiration_date: String,
+)
+
+data class AddProductResponse(
+    val message: String
+)
+
+data class UpdateProductRequest(
+    val name: String,
+    val category: String?,
+    val expiration_date: String
+)
+
+data class UpdateProductResponse(
+    val message: String
+)
+
+data class DeleteProductResponse(
+    val message: String
+)

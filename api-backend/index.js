@@ -57,18 +57,18 @@ app.get("/test-db", async (req, res) => {
 app.post("/login", async (req, res) => {
     const { email, password } = req.body;
 
-    if (!email || !password) return res.status(400).json({ error: "Dados incompletos!" })
+    if (!email || !password) return res.status(400).json({ error: "Dados incompletos!" } )
 
     try {
         const query = `SELECT id, name, email FROM ${SCHEMA}.users WHERE email = $1 AND password = $2`;
         const result = await pool.query(query, [email, password]);
 
-        if (result.rows.length === 0) return res.status(401).json({ error: "Credenciais Inválidas!" })
+        if (result.rows.length === 0) return res.status(401).json({ error: "Credenciais Inválidas!" } )
 
         res.status(200).json({ message: "Login Realizado!", user: result.rows[0] });
     } catch (err) {
         console.error(err);
-        res.status(500).json({ error: "Erro interno do servidor." })
+        res.status(500).json({ error: "Erro interno do servidor." } )
     }
 });
 
@@ -114,25 +114,25 @@ app.get("/products", async (req, res) => {
 
     } catch (err) {
         console.error(err);
-        res.status(500).json({ error: "Erro ao buscar produtos." })
+        res.status(500).json({ error: "Erro ao buscar produtos." } )
     }
 })
 
 app.post("/products", async (req, res) => {
     try {
-        const { name, category, expiration_date, user_id } = req.body;
+        const { name, category, expiration_date } = req.body;
 
-        if (!name || !category || !expiration_date || !user_id) {
+        if (!name || !category || !expiration_date) {
             return res.status(400).json({ error: "Dados incompletos!" });
         }
-        // Front end envia data no formato dd/mm/yyyy (lembrar de converter)
+        
         const query = `
-        INSERT INTO ${SCHEMA}.products (name, category, expiration_date, user_id)
-        VALUES ($1, $2, $3, $4)
+        INSERT INTO ${SCHEMA}.products (name, category, expiration_date)
+        VALUES ($1, $2, $3)
         RETURNING *
         `;
 
-        const result = await pool.query(query, [name, category, expiration_date, user_id]);
+        const result = await pool.query(query, [name, category, expiration_date]);
 
         res.status(201).json({ message: "Produto criado com sucesso!", product: result.rows[0] });  
     } catch (err) {
@@ -144,7 +144,7 @@ app.post("/products", async (req, res) => {
 app.put("/products/:id", async (req, res) => {
     try {
         const id = req.params.id;
-        const { name, category, expirationDate } = req.body;
+        const { name, category, expiration_date } = req.body;
 
         const query = `
             UPDATE ${SCHEMA}.products 
@@ -153,7 +153,7 @@ app.put("/products/:id", async (req, res) => {
             RETURNING *
         `;
 
-        const values = [name, category, expirationDate, id];
+        const values = [name, category, expiration_date, id];
         const result = await pool.query(query, values);
 
         if (result.rowCount === 0) {
