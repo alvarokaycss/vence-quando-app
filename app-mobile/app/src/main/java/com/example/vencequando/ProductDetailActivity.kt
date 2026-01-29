@@ -38,7 +38,7 @@ class ProductDetailActivity : AppCompatActivity() {
         val btnEdit = findViewById<Button>(R.id.btnEdit)
         val btnDelete = findViewById<Button>(R.id.btnDelete)
 
-        tvAppBarTitle.text = "Detalhes do Remédio"
+        tvAppBarTitle.text = "Detalhes do Produto"
 
         ivBack.setOnClickListener {
             finish() // Fecha a tela e volta para a anterior
