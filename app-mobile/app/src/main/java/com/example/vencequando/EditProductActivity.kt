@@ -29,7 +29,7 @@ class EditProductActivity : AppCompatActivity() {
         val etExpirationDate = findViewById<EditText>(R.id.etExpirationDate)
         val btnSave = findViewById<Button>(R.id.btnSave)
 
-        tvAppBarTitle.text = "Editar Remédio"
+        tvAppBarTitle.text = "Editar Produto"
 
         ivBack.setOnClickListener {
             finish() // Fecha a tela e volta para a anterior
