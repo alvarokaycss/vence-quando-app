@@ -1,6 +1,6 @@
-require("dotenv").config({path: __dirname + "/.env"} ); // Injeção absoluta do .env
+require("dotenv").config({ path: __dirname + "/.env" }); // Injeção absoluta do .env
 const express = require("express");
-const { Pool } =  require("pg");
+const { Pool } = require("pg");
 const process = require("process");
 const cors = require("cors");
 
@@ -57,18 +57,18 @@ app.get("/test-db", async (req, res) => {
 app.post("/login", async (req, res) => {
     const { email, password } = req.body;
 
-    if (!email || !password) return res.status(400).json({ error: "Dados incompletos!" } )
+    if (!email || !password) return res.status(400).json({ error: "Dados incompletos!" })
 
     try {
         const query = `SELECT id, name, email FROM ${SCHEMA}.users WHERE email = $1 AND password = $2`;
         const result = await pool.query(query, [email, password]);
 
-        if (result.rows.length === 0) return res.status(401).json({ error: "Credenciais Inválidas!" } )
+        if (result.rows.length === 0) return res.status(401).json({ error: "Credenciais Inválidas!" })
 
         res.status(200).json({ message: "Login Realizado!", user: result.rows[0] });
     } catch (err) {
         console.error(err);
-        res.status(500).json({ error: "Erro interno do servidor." } )
+        res.status(500).json({ error: "Erro interno do servidor." })
     }
 });
 
@@ -95,9 +95,9 @@ app.get("/products", async (req, res) => {
 
             let status = "OK";
             if (diffDays <= 0) status = "VENCIDO";
-            if (diffDays <= 3) status = "URGENTE";
-            if (diffDays <= 7) status = "ATENCAO";
-            
+            else if (diffDays <= 3) status = "URGENTE";
+            else if (diffDays <= 7) status = "ATENCAO";
+
             const dataFormatada = dataVencimento.toLocaleDateString("pt-BR");
 
             return {
@@ -109,12 +109,12 @@ app.get("/products", async (req, res) => {
                 daysRemaining: diffDays
             };
         });
-        
-        res.status(200).json({products: productsWithStatus});
+
+        res.status(200).json({ products: productsWithStatus });
 
     } catch (err) {
         console.error(err);
-        res.status(500).json({ error: "Erro ao buscar produtos." } )
+        res.status(500).json({ error: "Erro ao buscar produtos." })
     }
 })
 
@@ -125,7 +125,7 @@ app.post("/products", async (req, res) => {
         if (!name || !category || !expiration_date) {
             return res.status(400).json({ error: "Dados incompletos!" });
         }
-        
+
         const query = `
         INSERT INTO ${SCHEMA}.products (name, category, expiration_date)
         VALUES ($1, $2, $3)
@@ -134,7 +134,7 @@ app.post("/products", async (req, res) => {
 
         const result = await pool.query(query, [name, category, expiration_date]);
 
-        res.status(201).json({ message: "Produto criado com sucesso!", product: result.rows[0] });  
+        res.status(201).json({ message: "Produto criado com sucesso!", product: result.rows[0] });
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: "Erro ao criar produto." })

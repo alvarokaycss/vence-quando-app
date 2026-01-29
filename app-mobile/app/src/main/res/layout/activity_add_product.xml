@@ -18,7 +18,7 @@
             android:id="@+id/etProductName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Nome do Remédio" />
+            android:hint="Nome do Produto" />
 
         <EditText
             android:id="@+id/etProductCategory"
@@ -39,6 +39,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:backgroundTint="#F44336"
             android:text="Salvar" />
     </LinearLayout>
 

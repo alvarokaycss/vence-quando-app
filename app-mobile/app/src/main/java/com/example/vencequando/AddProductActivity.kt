@@ -26,7 +26,7 @@ class AddProductActivity : AppCompatActivity() {
         val etExpirationDate = findViewById<EditText>(R.id.etExpirationDate)
         val btnSave = findViewById<Button>(R.id.btnSave)
 
-        tvAppBarTitle.text = "Adicionar Remédio"
+        tvAppBarTitle.text = "Adicionar Produto"
 
         ivBack.setOnClickListener {
             finish() // Fecha a tela e volta para a anterior
